@@ -1,23 +1,34 @@
 #version 330 core
 
-out vec4 fragColor;
+in vec3 fragNormal;
+in vec3 fragPosition;
 
-uniform vec3 topColor;    // The color at the top of the sky
-uniform vec3 bottomColor; // The color at the bottom of the sky
+out vec4 color;
 
-in vec2 fragCoord;        // The fragment's screen coordinates from the vertex shader
-in vec4 worldPosition;    // World position for model rendering
-
-uniform bool isSkyRendering; // A flag to toggle between sky and model rendering
+uniform vec3 ambient;
+uniform vec3 diffuse;
+uniform vec3 specular;
+uniform vec3 lightColor;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+uniform float shininess;
 
 void main() {
-    if (isSkyRendering) {
-        // If rendering the sky, create the gradient
-        float mixFactor = fragCoord.y;
-        vec3 skyColor = mix(topColor, bottomColor, mixFactor);
-        fragColor = vec4(skyColor, 1.0);  // Output the gradient color for the sky
-    } else {
-        // If rendering the model, use a fixed color (modify as needed)
-        fragColor = vec4(1.0, 0.5, 0.2, 1.0);  // Simple color for the model
-    }
+    // Ambient
+    vec3 ambientComponent = ambient * lightColor;
+
+    // Diffuse
+    vec3 norm = normalize(fragNormal);
+    vec3 lightDir = normalize(lightPos - fragPosition);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuseComponent = diff * diffuse * lightColor;
+
+    // Specular
+    vec3 viewDir = normalize(viewPos - fragPosition);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specularComponent = spec * specular * lightColor;
+
+    vec3 result = ambientComponent + diffuseComponent + specularComponent;
+    color = vec4(result, 1.0);
 }

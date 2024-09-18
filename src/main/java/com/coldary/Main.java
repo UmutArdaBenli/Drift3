@@ -1,36 +1,46 @@
 package com.coldary;
 
 import com.coldary.objects.Camera;
-import com.coldary.utils.InputHandler;
+import com.coldary.objects.Skybox;
 import com.coldary.utils.ModelLoader;
-import com.coldary.utils.ResourceLoader;
 import com.coldary.utils.Shaders;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
+import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import java.util.List;
+
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Main {
 
     // Window dimensions
-    public int width = 1280;
-    public int height = 720;
+    private int width = 1280;
+    private int height = 720;
     private String title = "LWJGL 3D Model Rendering";
 
     // The window handle
     private long window;
 
     // Shader program
-    public int shaderProgram;
+    private Shaders shader;
+    private int shaderProgram;
 
-    // Camera object
+    // Scene objects
+    Skybox skybox;
     private Camera camera;
+
+    //Camera utils
+    private double lastX, lastY;
+    private boolean firstMouse = true;
 
     // Model loader
     private ModelLoader model;
@@ -50,7 +60,7 @@ public class Main {
             glfwFreeCallbacks(window);
             glfwDestroyWindow(window);
 
-            // terminate at the end of the loop
+            // Terminate GLFW
             glfwTerminate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -95,35 +105,111 @@ public class Main {
         GL.createCapabilities();
 
         // Initialize shaders and geometry
-        shaderProgram = Shaders.createShaderProgram();
-        glfwSetCursorPosCallback(window, new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                camera.processMouseMovement((float) xpos, (float) ypos);
-            }
-        });
+        shader = new Shaders("/Shaders/skybox/Vertex.skybox.glsl", "/Shaders/skybox/Fragment.skybox.glsl");
+        //shader.createShaderProgram();
+        shaderProgram = shader.getShaderProgram();
+
         // Load the 3D model
         model = new ModelLoader(Main.class.getResourceAsStream("/bmw_m4.obj"));
 
-        camera = new Camera(new Vector3f(0,0,0),new Vector3f(0,1,0),-90.0f,0);
+        // Initialize Camera
+        camera = new Camera(new Vector3f(0, 0, 3), new Vector3f(0, 1, 0), -90.0f, 0);
+
+        glfwSetCursorPosCallback(window, this::mouseCallback);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        List<String> faces = List.of(
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_rt.jpg",
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_lf.jpg",
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_up.jpg",
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_dn.jpg",
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_ft.jpg",
+                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_bk.jpg"
+        );
+        skybox = new Skybox(faces);
     }
 
     private void loop() {
         // Set the clear color
         GL11.glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
 
+        // Enable depth testing
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
         // Render loop
         while (!glfwWindowShouldClose(window)) {
             // Clear the framebuffer and depth buffer
-            GL11.glEnable(GL11.GL_DEPTH_TEST);  // Enable depth testing
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-            //renderGradientBackground();
-            // Use the shader program
+            // Set the view and projection matrices for the skybox
+            Matrix4f view = new Matrix4f(camera.getViewMatrix()).m30(0).m31(0).m32(0); // Remove translation
+            Matrix4f projection = camera.getPerspectiveMatrix();
+
+            // Render the skybox first
+            skybox.render(view, projection);
+
+            // Use the shader program for the model
             glUseProgram(shaderProgram);
-            System.out.println(camera.getYaw() + " " + camera.getPitch());
+
+            // Set the view and projection matrices for the model shader
+            shader.setMatrixUniform(shaderProgram, "view", camera.getViewMatrix());
+            shader.setMatrixUniform(shaderProgram, "projection", camera.getPerspectiveMatrix());
+
+            // Model matrix
+            Matrix4f matrixModel = new Matrix4f().identity();
+
+            int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+            glUniform3f(viewPosLoc, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+
+            int lightPosLoc = glGetUniformLocation(shaderProgram, "light.position");
+            glUniform3f(lightPosLoc, 1.2f, 1.0f, 2.0f);
+
+            int lightAmbientLoc = glGetUniformLocation(shaderProgram, "light.ambient");
+            glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
+
+            int lightDiffuseLoc = glGetUniformLocation(shaderProgram, "light.diffuse");
+            glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f);
+
+            int lightSpecularLoc = glGetUniformLocation(shaderProgram, "light.specular");
+            glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
+
+            // Set the material properties
+            int matAmbientLoc = glGetUniformLocation(shaderProgram, "material.ambient");
+            glUniform3f(matAmbientLoc, 1.0f, 0.5f, 0.31f);
+
+            int matDiffuseLoc = glGetUniformLocation(shaderProgram, "material.diffuse");
+            glUniform3f(matDiffuseLoc, 1.0f, 0.5f, 0.31f);
+
+            int matSpecularLoc = glGetUniformLocation(shaderProgram, "material.specular");
+            glUniform3f(matSpecularLoc, 0.5f, 0.5f, 0.5f);
+
+            int matShineLoc = glGetUniformLocation(shaderProgram, "material.shininess");
+            glUniform1f(matShineLoc, 32.0f);
+
+            shader.setMatrixUniform(shaderProgram, "model", matrixModel);  // Set the model matrix uniform
+
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_W, 0.0005f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_S, 0.0005f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_A, 0.0005f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_D, 0.0005f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_Q, 0.0005f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+                camera.processKeyboardInput(GLFW_KEY_E, 0.0005f);
+            }
+
             // Render the 3D model
             model.render();
+
+            System.out.println(camera.getYaw() + " " + camera.getPitch());
 
             // Swap the color buffers
             glfwSwapBuffers(window);
@@ -131,29 +217,27 @@ public class Main {
             // Poll for window events
             glfwPollEvents();
         }
+
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+        // Cleanup
         model.cleanup();
+        shader.cleanUp();
+        skybox.cleanup();
     }
 
-    private void renderGradientBackground() {
-        // Set the gradient colors (you can modify these as you like)
-        // Render the sky (before rendering the 3D model)
-        glUseProgram(shaderProgram);
-        glUniform1i(glGetUniformLocation(shaderProgram, "isSkyRendering"), 1);  // Set sky rendering to true
-        glUniform3f(glGetUniformLocation(shaderProgram, "topColor"), 0.1f, 0.4f, 1.0f);   // Top sky color (light blue)
-        glUniform3f(glGetUniformLocation(shaderProgram, "bottomColor"), 0.8f, 0.9f, 1.0f); // Bottom sky color (pale blue)
-    // Render a full-screen quad or use another approach to render the background sky
+    private void mouseCallback(long window, double xpos, double ypos) {
+        if (firstMouse) {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-    // Render the 3D model (after rendering the sky)
-        glUniform1i(glGetUniformLocation(shaderProgram, "isSkyRendering"), 0);  // Set sky rendering to false
-    // Bind and render the model here
+        float xOffset = (float) (xpos - lastX);
+        float yOffset = (float) (lastY - ypos); // reversed since y-coordinates range from bottom to top
+        lastX = xpos;
+        lastY = ypos;
 
-
-        // Render a full-screen quad
-        glBegin(GL_QUADS);
-            glVertex2f(-1.0f, -1.0f);
-            glVertex2f( 1.0f, -1.0f);
-            glVertex2f( 1.0f,  1.0f);
-            glVertex2f(-1.0f,  1.0f);
-        glEnd();
+        camera.processMouseMovement(xOffset, yOffset);
     }
 }

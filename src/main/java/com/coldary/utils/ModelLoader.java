@@ -7,7 +7,9 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -15,22 +17,56 @@ public class ModelLoader {
 
     private int vaoID;
     private int vertexCount;
-
-    // VAO and VBOs
     private List<Integer> vbos = new ArrayList<>();
+    private Map<String, Material> materials = new HashMap<>();
 
-    // Constructor to load OBJ model
-    public ModelLoader(InputStream filePath) {
-        loadOBJ(filePath);
+    public ModelLoader(InputStream objFilePath) {
+        loadOBJ(objFilePath);
     }
 
-    public void loadOBJ(InputStream filePath) {
+    private void loadMTL(String mtlFileName, URL baseURL) {
+        System.out.println("Loading MTL file from: " + mtlFileName); // Debugging
+
+        Material currentMaterial = null;
+
+        try (InputStream mtlFilePath = new URL(baseURL, mtlFileName).openStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(mtlFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Print the line being processed
+                System.out.println("Processing line: " + line);
+
+                String[] tokens = line.split("\\s+");
+                if (line.startsWith("newmtl")) {
+                    currentMaterial = new Material(tokens[1]);
+                    materials.put(tokens[1], currentMaterial);
+                } else if (line.startsWith("Kd") && currentMaterial != null) {
+                    currentMaterial.setDiffuse(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[3]));
+                } else if (line.startsWith("Ka") && currentMaterial != null) {
+                    currentMaterial.setAmbient(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[3]));
+                } else if (line.startsWith("Ks") && currentMaterial != null) {
+                    currentMaterial.setSpecular(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[3]));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing number in line: " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Error processing line, not enough tokens: " + e.getMessage());
+        }
+    }
+
+    private void loadOBJ(InputStream filePath) {
         List<float[]> vertices = new ArrayList<>();
         List<float[]> textures = new ArrayList<>();
         List<float[]> normals = new ArrayList<>();
         List<int[]> indices = new ArrayList<>();
 
         System.out.println("Loading OBJ file from: " + filePath); // Debugging
+
+        // Obtain the base URL for resolving mtl file paths
+        URL baseURL = this.getClass().getResource("");
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePath))) {
             String line;
@@ -39,7 +75,10 @@ public class ModelLoader {
                 System.out.println("Processing line: " + line);
 
                 String[] tokens = line.split("\\s+");
-                if (line.startsWith("v ")) {
+                if (line.startsWith("mtllib")) {
+                    // Load material file
+                    loadMTL(tokens[1], baseURL);
+                } else if (line.startsWith("v ")) {
                     // Vertex position
                     float[] vertex = {
                             Float.parseFloat(tokens[1]),
@@ -83,7 +122,6 @@ public class ModelLoader {
 
         storeInVAO(verticesArray, texturesArray, normalsArray, indicesArray);
     }
-
 
     private void processFace(String[] tokens, List<int[]> indices) {
         for (int i = 1; i < tokens.length; i++) {
@@ -163,12 +201,18 @@ public class ModelLoader {
         MemoryUtil.memFree(buffer);
     }
 
-    // Render the model
+    // Render the model with materials
     public void render() {
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+
+        Material material = materials.values().stream().findFirst().orElse(Material.DEFAULT_MATERIAL);
+
+        if (material != null) {
+            // Set material properties (this would typically go to a shader)
+        }
 
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
 
@@ -185,5 +229,40 @@ public class ModelLoader {
             glDeleteBuffers(vbo);
         }
         glDeleteVertexArrays(vaoID);
+    }
+
+    static class Material {
+        private String name;
+        private float[] ambient = new float[]{0.2f, 0.2f, 0.2f};
+        private float[] diffuse = new float[]{0.8f, 0.8f, 0.8f};
+        private float[] specular = new float[]{1.0f, 1.0f, 1.0f};
+
+        public static final Material DEFAULT_MATERIAL = new Material("default");
+
+        public Material(String name) {
+            this.name = name;
+        }
+
+        public void setAmbient(float r, float g, float b) {
+            this.ambient = new float[]{r, g, b};
+        }
+
+        public void setDiffuse(float r, float g, float b) {
+            this.diffuse = new float[]{r, g, b};
+        }
+
+        public void setSpecular(float r, float g, float b) {
+            this.specular = new float[]{r, g, b};
+        }
+
+        @Override
+        public String toString() {
+            return "Material{" +
+                    "name='" + name + '\'' +
+                    ", ambient=" + ambient[0] + ", " + ambient[1] + ", " + ambient[2] +
+                    ", diffuse=" + diffuse[0] + ", " + diffuse[1] + ", " + diffuse[2] +
+                    ", specular=" + specular[0] + ", " + specular[1] + ", " + specular[2] +
+                    '}';
+        }
     }
 }

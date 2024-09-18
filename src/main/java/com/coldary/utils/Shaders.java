@@ -1,41 +1,85 @@
 package com.coldary.utils;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.IOException;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+
+import java.io.*;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Shaders {
 
-    public static int createShaderProgram() {
+
+    private int shaderProgram;
+    private int vertexShaderID;
+    private int fragmentShaderID;
+
+    public Shaders(String vertexFile, String fragmentFile) {
+        vertexShaderID = loadShader(vertexFile, GL_VERTEX_SHADER);
+        fragmentShaderID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShaderID);
+        glAttachShader(shaderProgram, fragmentShaderID);
+        glLinkProgram(shaderProgram);
+        if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
+            System.err.println("Program Linking: " + glGetProgramInfoLog(shaderProgram));
+            System.exit(1);
+        }
+        glValidateProgram(shaderProgram);
+    }
+    private int loadShader(String filePath, int type) {
+        StringBuilder shaderSource = new StringBuilder();
+
+        try (InputStream inputStream = getClass().getResourceAsStream(filePath);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                shaderSource.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        int shaderID = glCreateShader(type);
+        glShaderSource(shaderID, shaderSource);
+        glCompileShader(shaderID);
+        if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
+            System.err.println("Shader Compilation: " + glGetShaderInfoLog(shaderID));
+            System.exit(1);
+        }
+        return shaderID;
+    }
+    public int createShaderProgram() {
         // Load and compile vertex shader
-        int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, ResourceLoader.readFileFromResources("Shaders/Vertex.glsl"));
-        glCompileShader(vertexShader);
-        checkCompileErrors(vertexShader, "VERTEX");
+        vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShaderID, ResourceLoader.readFileFromResources("Shaders/Vertex.glsl"));
+        glCompileShader(vertexShaderID);
+        checkCompileErrors(vertexShaderID, "VERTEX");
 
         // Load and compile fragment shader
-        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, ResourceLoader.readFileFromResources("Shaders/Fragment.glsl"));
-        glCompileShader(fragmentShader);
-        checkCompileErrors(fragmentShader, "FRAGMENT");
+        fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShaderID, ResourceLoader.readFileFromResources("Shaders/Fragment.glsl"));
+        glCompileShader(fragmentShaderID);
+        checkCompileErrors(fragmentShaderID, "FRAGMENT");
 
         // Link shaders to program
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShaderID);
+        glAttachShader(shaderProgram, fragmentShaderID);
         glLinkProgram(shaderProgram);
         checkCompileErrors(shaderProgram, "PROGRAM");
 
         // Clean up shaders (no longer needed after linking)
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        glDeleteShader(vertexShaderID);
+        glDeleteShader(fragmentShaderID);
 
         return shaderProgram;
     }
 
-    private static void checkCompileErrors(int shader, String type) {
+    private void checkCompileErrors(int shader, String type) {
         int success;
         if (type.equals("PROGRAM")) {
             success = glGetProgrami(shader, GL_LINK_STATUS);
@@ -52,12 +96,44 @@ public class Shaders {
         }
     }
 
-    private static String readFileAsString(String filePath) {
-        try {
-            return new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
+    public void setMatrixUniform(int program, String name, Matrix4f matrix) {
+        int location = glGetUniformLocation(program, name);
+        try (MemoryStack stack = stackPush()) {
+            FloatBuffer fb = stack.mallocFloat(16);
+            matrix.get(fb);
+            glUniformMatrix4fv(location, false, fb);
         }
+    }
+    public void loadMatrix(int location, FloatBuffer matrix) {
+        glUniformMatrix4fv(location, false, matrix);
+    }
+    public void start() {
+        glUseProgram(shaderProgram);
+    }
+    public void stop() {
+        glUseProgram(0);
+    }
+
+    public void cleanUp() {
+        stop();
+        glDetachShader(shaderProgram, vertexShaderID);
+        glDetachShader(shaderProgram, fragmentShaderID);
+        glDeleteShader(vertexShaderID);
+        glDeleteShader(fragmentShaderID);
+        glDeleteProgram(shaderProgram);
+    }
+    public int getUniformLocation(String uniformName) {
+        return glGetUniformLocation(shaderProgram, uniformName);
+    }
+    public int getShaderProgram() {
+        return shaderProgram;
+    }
+
+    public int getVertexShaderID() {
+        return vertexShaderID;
+    }
+
+    public int getFragmentShaderID() {
+        return fragmentShaderID;
     }
 }
