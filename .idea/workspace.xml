@@ -5,22 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="af814871-b88c-4d79-9133-881b72d08579" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/InputHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/ModelLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/ResourceLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/Shaders.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Fragment.glsl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Vertex.glsl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/bmw_m4.mtl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/bmw_m4.obj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/utils/Shaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/Shaders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/Fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Fragment.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/Vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Vertex.glsl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,9 +28,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;UmutArdaBenli&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/UmutArdaBenli/Drift3.git&quot;,
+    &quot;accountId&quot;: &quot;b1d55476-042f-475b-bdde-093aba64d395&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2mBdSeOWfhhFVnhSQM5dzsR0ALt" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -48,17 +51,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "onboarding.tips.debug.path": "C:/Users/umut/IdeaProjects/Drift3D/src/main/java/com/coldary/Main.java",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/umut/IdeaProjects/Drift3D/src/main/java/com/coldary/Main.java&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\umut\IdeaProjects\Drift3D\src\main\resources" />
@@ -84,6 +94,14 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -92,7 +110,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1726553904445</updated>
+      <workItem from="1726587221833" duration="5985000" />
+      <workItem from="1726598508387" duration="1653000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.glsl" />
   </component>
 </project>

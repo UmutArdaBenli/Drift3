@@ -11,13 +11,13 @@ public class Shaders {
     public static int createShaderProgram() {
         // Load and compile vertex shader
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, readFileAsString("vertex.glsl"));
+        glShaderSource(vertexShader, ResourceLoader.readFileFromResources("Shaders/Vertex.glsl"));
         glCompileShader(vertexShader);
         checkCompileErrors(vertexShader, "VERTEX");
 
         // Load and compile fragment shader
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, readFileAsString("fragment.glsl"));
+        glShaderSource(fragmentShader, ResourceLoader.readFileFromResources("Shaders/Fragment.glsl"));
         glCompileShader(fragmentShader);
         checkCompileErrors(fragmentShader, "FRAGMENT");
 
@@ -35,14 +35,6 @@ public class Shaders {
         return shaderProgram;
     }
 
-    private static String readFileAsString(String filePath) {
-        try {
-            return new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
     private static void checkCompileErrors(int shader, String type) {
         int success;
         if (type.equals("PROGRAM")) {
@@ -57,6 +49,15 @@ public class Shaders {
                 System.err.println("Error: " + type + " shader compilation failed.");
                 System.err.println(glGetShaderInfoLog(shader));
             }
+        }
+    }
+
+    private static String readFileAsString(String filePath) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
         }
     }
 }
