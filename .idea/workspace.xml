@@ -4,20 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af814871-b88c-4d79-9133-881b72d08579" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/MainApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Skybox.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Fragment.skybox.glsl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Vertex.skybox.glsl" afterDir="false" />
+    <list default="true" id="af814871-b88c-4d79-9133-881b72d08579" name="Changes" comment="- Added new car shading and skybox. though they arent functional, they will be fully implemented in the next update.">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Objects/Cube.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/utils/ModelLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/ModelLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Skybox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/objects/Skybox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/coldary/utils/Shaders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/coldary/utils/Shaders.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/Fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Fragment.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/Vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/Vertex.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/bmw_m4.mtl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/bmw_m4.mtl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/bmw_m4.obj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/bmw_m4.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Fragment.skybox.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Fragment.skybox.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Vertex.skybox.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Shaders/skybox/Vertex.skybox.glsl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +43,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -60,28 +56,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainApplication.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/umut/IdeaProjects/Drift3D/src/main/java/com/coldary/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.MainApplication.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/umut/IdeaProjects/Drift3D/src/main/java/com/coldary/Main.java",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\umut\IdeaProjects\Drift3\src\main\resources" />
@@ -133,6 +134,15 @@
       <workItem from="1726587221833" duration="5985000" />
       <workItem from="1726598508387" duration="1653000" />
     </task>
+    <task id="LOCAL-00001" summary="- Added new car shading and skybox. though they arent functional, they will be fully implemented in the next update.">
+      <option name="closed" value="true" />
+      <created>1726667758741</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1726667758741</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,5 +150,9 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.glsl" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="- Added new car shading and skybox. though they arent functional, they will be fully implemented in the next update." />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added new car shading and skybox. though they arent functional, they will be fully implemented in the next update." />
   </component>
 </project>

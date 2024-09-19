@@ -110,7 +110,7 @@ public class Main {
         shaderProgram = shader.getShaderProgram();
 
         // Load the 3D model
-        model = new ModelLoader(Main.class.getResourceAsStream("/bmw_m4.obj"));
+        model = new ModelLoader(Main.class.getResourceAsStream("/Objects/Cube.obj"));
 
         // Initialize Camera
         camera = new Camera(new Vector3f(0, 0, 3), new Vector3f(0, 1, 0), -90.0f, 0);
@@ -118,12 +118,12 @@ public class Main {
         glfwSetCursorPosCallback(window, this::mouseCallback);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         List<String> faces = List.of(
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_rt.jpg",
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_lf.jpg",
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_up.jpg",
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_dn.jpg",
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_ft.jpg",
-                "C:/Users/umut/Desktop/null_Plainsky/null_plainsky512_bk.jpg"
+                "/null_Plainsky/null_plainsky512_dn.jpg",
+                "/null_Plainsky/null_plainsky512_dn.jpg",
+                "/null_Plainsky/null_plainsky512_dn.jpg",
+                "/null_Plainsky/null_plainsky512_dn.jpg",
+                "/null_Plainsky/null_plainsky512_dn.jpg",
+                "/null_Plainsky/null_plainsky512_dn.jpg"
         );
         skybox = new Skybox(faces);
     }
